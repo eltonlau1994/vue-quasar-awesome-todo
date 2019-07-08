@@ -1,66 +1,45 @@
 <template>
   <q-page class="q-pa-md">
-    <q-list bordered separator>
-      <q-item v-for="task in tasks" :key="task.id" @click="task.completed = !task.completed" clickable v-ripple :class="task.completed ? 'bg-green-1' : 'bg-orange-1' ">
-        <q-item-section side top>
-          <q-checkbox v-model="task.completed" />
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label :class="{ 'text-strikethrough': task.completed}">{{task.name}}</q-item-label>
-        </q-item-section>
-
-        <q-item-section side>
-          <div class="row">
-            <div class="column" justify-center>
-              <q-icon name="event" size="18px" class="q-mr-xs" />
-            </div>
-            <div class="column">
-              <q-item-label class="row justify-end" caption>{{task.dueDate}}</q-item-label>
-              <q-item-label class="row justify-end" caption><small>{{task.dueTime}}</small></q-item-label>
-            </div>
-
-          </div>
-        </q-item-section>
-
-      </q-item>
+    <q-list bordered separator v-if="Object.keys(tasks).length">
+      <task v-for="(task, key) in tasks" :key="key" :task="task" :id="key"></task>
     </q-list>
+    <div class="absolute-bottom text-center q-mb-lg">
+      <q-btn
+        @click="showAddTask = true"
+        round
+        color="primary"
+        size="24px"
+        icon="add"
+      />
+    </div>
+    <q-dialog v-model="showAddTask">
+      <AddTask @close="showAddTask = false"></AddTask>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
+import Task from "../components/Tasks/Task.vue";
+import AddTask from "../components/Modals/AddTask"
+import { mapGetters } from "vuex";
 export default {
+  components: {
+    Task,
+    AddTask
+  },
   data() {
     return {
-      tasks: [
-        {
-          id: 1,
-          name: "Go to shop",
-          completed: false,
-          dueDate: '2019/07/06',
-          dueTime:'18:30'
-        },
-                {
-          id: 2,
-          name: "Get bananas",
-          completed: false,
-          dueDate: '2019/07/13',
-          dueTime:'20:30'
-        },
-        {
-          id: 3,
-          name: "Get apples",
-          completed: false,
-          dueDate: '2019/07/19',
-          dueTime:'09:30'
-        }
-      ]
+      showAddTask: false
     }
+  },
+  computed: {
+    ...mapGetters("tasks", ["tasks"])
+    // tasks() {
+    //   return this.$store.getters['tasks/tasks']
+    // }
   }
-
-}
+};
 </script>
 
 <style>
-
 </style>
