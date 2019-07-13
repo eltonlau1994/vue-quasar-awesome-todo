@@ -1,6 +1,6 @@
 <template>
   <q-card>
-    <modal-header>Add Task</modal-header>
+    <modal-header>Edit Task</modal-header>
 
 
     <q-form @submit.prevent="onSubmit" class="q-gutter-md">
@@ -11,7 +11,6 @@
       </q-card-section>
 
       <modal-button />
-
     </q-form>
   </q-card>
 </template>
@@ -32,6 +31,7 @@ export default {
     ModalDueTime,
     ModalButton
   },
+  props: ['task', 'id'],
   data() {
     return {
       taskToSubmit: {
@@ -43,7 +43,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions('tasks', ['addTask']),
+    ...mapActions('tasks', ['updateTask']),
     onSubmit() {
       console.log("onSubmit");
       this.$refs.modalTaskName.$refs.name.validate()
@@ -52,10 +52,15 @@ export default {
       }
     },
     submitTask(){
-      console.log("submit form");
-      this.addTask(this.taskToSubmit)
+      this.updateTask({
+        id: this.id,
+        updates: this.taskToSubmit
+      })
       this.$emit('close') //close modal
     }
+  },
+  mounted() {
+    this.taskToSubmit = Object.assign({}, this.task)
   }
 };
 </script>
