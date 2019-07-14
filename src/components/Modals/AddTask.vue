@@ -9,9 +9,7 @@
         <modal-due-date :dueDate.sync="taskToSubmit.dueDate" />
         <modal-due-time :dueTime.sync="taskToSubmit.dueTime" />
       </q-card-section>
-
       <modal-button />
-
     </q-form>
   </q-card>
 </template>
