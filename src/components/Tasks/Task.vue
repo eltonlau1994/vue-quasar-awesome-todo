@@ -3,6 +3,7 @@
     <q-item
       @click="updateTask({id: id, updates: { completed: !task.completed }})"
       clickable
+      v-touch-hold:1000.mouse="showEditTaskModal"
       v-ripple
       :class="task.completed ? 'bg-green-1' : 'bg-orange-1' "
     >
@@ -11,7 +12,10 @@
       </q-item-section>
 
       <q-item-section>
-        <q-item-label :class="{ 'text-strikethrough': task.completed}">{{task.name}}</q-item-label>
+        <q-item-label
+          :class="{ 'text-strikethrough': task.completed}"
+          v-html="$options.filters.searchHighlight(task.name, search)"
+        ></q-item-label>
       </q-item-section>
 
       <q-item-section side v-if="task.dueDate">
@@ -20,7 +24,7 @@
             <q-icon name="event" size="18px" class="q-mr-xs" />
           </div>
           <div class="column">
-            <q-item-label class="row justify-end" caption>{{task.dueDate}}</q-item-label>
+            <q-item-label class="row justify-end" caption>{{task.dueDate | niceDate }}</q-item-label>
             <q-item-label class="row justify-end" caption>
               <small>{{task.dueTime}}</small>
             </q-item-label>
@@ -30,7 +34,7 @@
 
       <q-item-section side>
         <div class="row">
-          <q-btn flat round color="primary" dense icon="edit" @click.stop="showEditTask = true" />
+          <q-btn flat round color="primary" dense icon="edit" @click.stop="showEditTaskModal" />
           <q-btn flat round color="red" dense icon="delete" @click.stop="promptToDelete(id)" />
         </div>
       </q-item-section>
@@ -43,8 +47,11 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import EditTask from '../Modals/EditTask.vue'
+import { mapActions, mapState } from "vuex";
+import EditTask from "../Modals/EditTask.vue";
+import { date } from "quasar";
+const { addToDate } = date;
+
 export default {
   components: {
     EditTask
@@ -53,20 +60,44 @@ export default {
   data() {
     return {
       showEditTask: false
-    }
+    };
   },
   methods: {
-    ...mapActions("tasks", ["updateTask", 'deleteTask']),
+    ...mapActions("tasks", ["updateTask", "deleteTask"]),
+    showEditTaskModal() {
+      this.showEditTask = true;
+    },
     promptToDelete(id) {
-      this.$q.dialog({
-        title: 'Confirm',
-        message: 'Do you really want to delete this task?',
-        cancel: true,
-        persistent: true
-      }).onOk(() => {
-        this.deleteTask(id)
-      })
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Do you really want to delete this task?",
+          cancel: true,
+          persistent: true
+        })
+        .onOk(() => {
+          this.deleteTask(id);
+        });
     }
+  },
+  filters: {
+    niceDate(value) {
+      return date.formatDate(value, "MMM D ");
+    },
+    searchHighlight(value, search) {
+      if (search) {
+        let searchRegExp = new RegExp(search, 'ig')
+        return value.replace(
+          searchRegExp, (match) => {
+            return '<span class="bg-yellow-6">' + match + "</span>"
+          }
+        );
+      }
+      return value;
+    }
+  },
+  computed: {
+    ...mapState("tasks", ["search"])
   }
 };
 </script>
