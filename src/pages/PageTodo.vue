@@ -1,21 +1,31 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row q-mb-lg">
-      <search />
+  <q-page>
+    <div class="q-pa-md absolute full-width full-height column">
+      <div class="row q-mb-lg">
+        <search />
+      </div>
+      <p v-if="!Object.keys(tasksTodo).length && search && !Object.keys(tasksCompleted).length">No search results.</p>
+
+      <q-scroll-area class="q-scroll-area-tasks">
+        <div class="relative-position">
+          <no-tasks  v-if="!Object.keys(tasksTodo).length && !search"></no-tasks>
+          <tasks-todo :tasksTodo="tasksTodo" v-if="Object.keys(tasksTodo).length"></tasks-todo>
+          <tasks-completed :tasksCompleted="tasksCompleted" v-if="Object.keys(tasksCompleted).length" class="q-mb-xl"></tasks-completed>
+        </div>
+      </q-scroll-area>
+
+      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+        <q-btn
+          @click="showAddTask = true"
+          round
+          class="all-pointer-events"
+          color="primary"
+          size="24px"
+          icon="add"
+        />
+      </div>
     </div>
-    <p v-if="!Object.keys(tasksTodo).length && search && !Object.keys(tasksCompleted).length">No search results.</p>
-    <no-tasks  v-if="!Object.keys(tasksTodo).length && !search"></no-tasks>
-    <tasks-todo :tasksTodo="tasksTodo" v-if="Object.keys(tasksTodo).length"></tasks-todo>
-    <tasks-completed :tasksCompleted="tasksCompleted" v-if="Object.keys(tasksCompleted).length"></tasks-completed>
-    <div class="absolute-bottom text-center q-mb-lg">
-      <q-btn
-        @click="showAddTask = true"
-        round
-        color="primary"
-        size="24px"
-        icon="add"
-      />
-    </div>
+
     <q-dialog v-model="showAddTask">
       <AddTask @close="showAddTask = false"></AddTask>
     </q-dialog>
@@ -58,6 +68,8 @@ export default {
 };
 </script>
 
-<style>
-
+<style lang="stylus">
+  .q-scroll-area-tasks
+    display: flex
+    flex-grow: 1
 </style>

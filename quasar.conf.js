@@ -61,7 +61,8 @@ module.exports = function (ctx) {
         'QPopupProxy',
         'QTime',
         'QForm',
-        'QBanner'
+        'QBanner',
+        'QScrollArea'
       ],
 
       directives: [
@@ -97,7 +98,10 @@ module.exports = function (ctx) {
     },
 
     // animations: 'all', // --- includes all animations
-    animations: [],
+    animations: [
+      'zoomIn',
+      'zoomOut'
+    ],
 
     ssr: {
       pwa: false
