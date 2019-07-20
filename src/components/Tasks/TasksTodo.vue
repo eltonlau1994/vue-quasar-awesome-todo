@@ -5,7 +5,7 @@
     leave-active-class="animated zoomOut absolute-top"
   >
     <div>
-      <list-header bgColor="bg-orange-4">Todo</list-header>
+      <list-header bgColor="bg-orange-4" v-if="!settings.showTasksInOneList">Todo</list-header>
       <q-list bordered separator>
         <task v-for="(task, key) in tasksTodo" :key="key" :task="task" :id="key"></task>
       </q-list>
@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import Task from "./Task";
 import ListHeader from '../Shared/ListHeader'
 
@@ -22,6 +23,9 @@ export default {
     Task,
     ListHeader,
   },
-  props: ["tasksTodo"]
+  props: ["tasksTodo"],
+  computed: {
+    ...mapGetters('settings', ['settings'])
+  }
 };
 </script>
