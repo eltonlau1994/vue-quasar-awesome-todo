@@ -6,6 +6,8 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
+      'firebase',
+      'router-auth'
     ],
 
     css: [
@@ -27,7 +29,6 @@ module.exports = function (ctx) {
     framework: {
       // iconSet: 'ionicons-v4',
       // lang: 'de', // Quasar language
-
       // all: true, // --- includes everything; for dev only!
 
       components: [
@@ -63,7 +64,14 @@ module.exports = function (ctx) {
         'QForm',
         'QBanner',
         'QScrollArea',
-        'QToggle'
+        'QToggle',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QTabPanel',
+        'QTabPanels',
+        'QSeparator',
+        'Loading'
       ],
 
       directives: [
