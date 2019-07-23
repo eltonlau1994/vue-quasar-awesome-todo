@@ -1,29 +1,42 @@
 <template>
   <q-page>
     <div class="q-pa-md absolute full-width full-height column">
-      <div class="row q-mb-lg">
-        <search />
-      </div>
-      <p v-if="!Object.keys(tasksTodo).length && search && !Object.keys(tasksCompleted).length">No search results.</p>
 
-      <q-scroll-area class="q-scroll-area-tasks">
-        <div class="relative-position">
-          <no-tasks  v-if="!Object.keys(tasksTodo).length && !search && !settings.showTasksInOneList"></no-tasks>
-          <tasks-todo :tasksTodo="tasksTodo" v-if="Object.keys(tasksTodo).length"></tasks-todo>
-          <tasks-completed :tasksCompleted="tasksCompleted" v-if="Object.keys(tasksCompleted).length" class="q-mb-xl"></tasks-completed>
+      <template v-if="tasksDownloaded">
+        <div class="row q-mb-lg">
+          <search />
         </div>
-      </q-scroll-area>
+        <p v-if="!Object.keys(tasksTodo).length && search && !Object.keys(tasksCompleted).length">No search results.</p>
 
-      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
-        <q-btn
-          @click="showAddTask = true"
-          round
-          class="all-pointer-events"
-          color="primary"
-          size="24px"
-          icon="add"
-        />
-      </div>
+        <q-scroll-area class="q-scroll-area-tasks">
+          <div class="relative-position">
+            <no-tasks  v-if="!Object.keys(tasksTodo).length && !search && !settings.showTasksInOneList"></no-tasks>
+            <tasks-todo :tasksTodo="tasksTodo" v-if="Object.keys(tasksTodo).length"></tasks-todo>
+            <tasks-completed :tasksCompleted="tasksCompleted" v-if="Object.keys(tasksCompleted).length" class="q-mb-xl"></tasks-completed>
+          </div>
+        </q-scroll-area>
+
+        <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+          <q-btn
+            @click="showAddTask = true"
+            round
+            class="all-pointer-events"
+            color="primary"
+            size="24px"
+            icon="add"
+          />
+        </div>
+      </template>
+
+      <template v-else>
+        <span class="absolute-center">
+          <q-spinner
+            color="primary"
+            size="3em"
+          />
+        </span>
+      </template>
+
     </div>
 
     <q-dialog v-model="showAddTask">
@@ -56,7 +69,7 @@ export default {
   computed: {
     ...mapGetters("tasks", ["tasksTodo", "tasksCompleted"]),
     ...mapGetters("settings", ["settings"]),
-    ...mapState('tasks', ['search'])
+    ...mapState('tasks', ['search', 'tasksDownloaded'])
     // tasks() {
     //   return this.$store.getters['tasks/tasks']
     // }

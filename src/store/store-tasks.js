@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import { uid } from 'quasar'
+import { uid, Notify } from 'quasar'
 import { fireStoreDb, firebaseAuth } from '../boot/firebase';
-
+import { showErrorMessage } from '../functions/function-show-error-message';
 
 
 const state = {
@@ -25,7 +25,8 @@ const state = {
     //   dueTime:'09:30'
     // }
   },
-  search: ''
+  search: '',
+  tasksDownloaded: false
 }
 
 const mutations = {
@@ -40,17 +41,23 @@ const mutations = {
   },
   setSearch(state, value) {
     state.search = value
+  },
+  setTasksDownloaded(state, value) {
+    state.tasksDownloaded = value
+  },
+  clearTasks(state) {
+    state.tasks = {}
   }
 }
 
 const actions = {
-  updateTask({dispatch}, payload) {
+  updateTask({ dispatch }, payload) {
     dispatch('fbUpdateTask', payload)
   },
-  deleteTask({dispatch}, id) {
+  deleteTask({ dispatch }, id) {
     dispatch('fbDeleteTask', id)
   },
-  addTask({dispatch}, task) {
+  addTask({ dispatch }, task) {
     let taskId = uid()
     let payload = {
       id: taskId,
@@ -58,10 +65,10 @@ const actions = {
     }
     dispatch('fbAddTask', payload)
   },
-  setSearch({commit}, value) {
+  setSearch({ commit }, value) {
     commit('setSearch', value)
   },
-  fbReadData({commit}) {
+  fbReadData({ commit }) {
     let userId = firebaseAuth.currentUser.uid
     let tasksRef = fireStoreDb.collection('users').doc(userId).collection('tasks')
     tasksRef.onSnapshot(snapshot => {
@@ -72,21 +79,44 @@ const actions = {
         })
       })
     })
+    commit('setTasksDownloaded', true)
   },
-  fbAddTask({}, payload) {
+  fbAddTask({ }, payload) {
     let userId = firebaseAuth.currentUser.uid
     let tasksRef = fireStoreDb.collection('users').doc(userId).collection('tasks')
     tasksRef.doc(payload.id).set(payload.task)
+    .then(() => {
+      Notify.create('Task added!')
+    })
+    .catch(error => {
+      showErrorMessage(error)
+    })
   },
-  fbUpdateTask({}, payload) {
+  fbUpdateTask({ }, payload) {
     let userId = firebaseAuth.currentUser.uid
     let tasksRef = fireStoreDb.collection('users').doc(userId).collection('tasks')
     tasksRef.doc(payload.id).update(payload.updates)
+    .then(() => {
+      let keys = Object.keys(payload.updates)
+      console.log(keys)
+      if (!(keys.includes('completed') && keys.length == 1)) {
+        Notify.create('Task edited!')
+      }
+    })
+    .catch(error => {
+      showErrorMessage(error)
+    })
   },
-  fbDeleteTask({}, taskId) {
+  fbDeleteTask({ commit }, taskId) {
     let userId = firebaseAuth.currentUser.uid
     let tasksRef = fireStoreDb.collection('users').doc(userId).collection('tasks')
     tasksRef.doc(taskId).delete()
+    .then(() => {
+      commit('deleteTask', taskId)
+    })
+    .then(() => {
+      Notify.create('Task deleted!')
+    })
   }
 }
 
@@ -94,7 +124,7 @@ const getters = {
   tasksTodo: (state, getters) => {
     let tasksFiltered = getters.tasksFiltered
     let tasks = {}
-    Object.keys(tasksFiltered).forEach(function(key) {
+    Object.keys(tasksFiltered).forEach(function (key) {
       let task = tasksFiltered[key]
       if (!task.completed) {
         tasks[key] = task
@@ -105,7 +135,7 @@ const getters = {
   tasksCompleted: (state, getters) => {
     let tasksFiltered = getters.tasksFiltered
     let tasks = {}
-    Object.keys(tasksFiltered).forEach(function(key) {
+    Object.keys(tasksFiltered).forEach(function (key) {
       let task = tasksFiltered[key]
       if (task.completed) {
         tasks[key] = task
@@ -116,7 +146,7 @@ const getters = {
   tasksFiltered: (state) => {
     let tasksFiltered = {}
     if (state.search) {
-      Object.keys(state.tasks).forEach(function(key) {
+      Object.keys(state.tasks).forEach(function (key) {
         let task = state.tasks[key], taskNameLowerCase = task.name.toLowerCase(), searchLowerCase = state.search.toLowerCase()
         if (taskNameLowerCase.includes(searchLowerCase)) {
           tasksFiltered[key] = task
