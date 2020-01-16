@@ -1,0 +1,30 @@
+[debug] [2020-01-16T15:26:41.900Z] ----------------------------------------------------------------------
+[debug] [2020-01-16T15:26:41.902Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\twili\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting:test-37782
+[debug] [2020-01-16T15:26:41.902Z] CLI Version:   7.12.1
+[debug] [2020-01-16T15:26:41.902Z] Platform:      win32
+[debug] [2020-01-16T15:26:41.902Z] Node Version:  v11.7.0
+[debug] [2020-01-16T15:26:41.903Z] Time:          Thu Jan 16 2020 23:26:41 GMT+0800 (Hong Kong Standard Time)
+[debug] [2020-01-16T15:26:41.903Z] ----------------------------------------------------------------------
+[debug] [2020-01-16T15:26:41.903Z] 
+[debug] [2020-01-16T15:26:41.911Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-01-16T15:26:41.911Z] > authorizing via signed-in user
+[debug] [2020-01-16T15:26:41.911Z] [iam] checking project awesome-todo-9a00e for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2020-01-16T15:26:41.913Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/awesome-todo-9a00e:testIamPermissions  
+
+[debug] [2020-01-16T15:26:43.011Z] <<< HTTP RESPONSE 200
+[debug] [2020-01-16T15:26:43.016Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/awesome-todo-9a00e  
+ 
+[debug] [2020-01-16T15:26:43.702Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'awesome-todo-9a00e'...
+[info] 
+[info] i  deploying hosting
+[info] 
+[info] +  Deploy complete!
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/awesome-todo-9a00e/overview
+[debug] [2020-01-16T15:26:43.800Z] TypeError: Cannot read property 'deploys' of undefined
+    at C:\Users\twili\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\index.js:84:36
+    at processTicksAndRejections (internal/process/next_tick.js:81:5)
+[error] 
+[error] Error: An unexpected error has occurred.
